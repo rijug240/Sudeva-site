@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudeva — Coach & Player Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0A1628;--navy-mid:#112240;--navy-light:#1a3360;
+  --red:#C8102E;--red2:#e8122e;--gold:#C9A84C;--gold2:#e8c96a;
+  --green:#22c55e;--blue:#3b82f6;--orange:#f97316;--purple:#a855f7;
+  --white:#F5F5F0;--surface:#13161d;--surface2:#1a1e28;--surface3:#222736;
+  --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
+  --text:#e8eaf0;--text2:#8b91a8;--text3:#4a5068;
+  --r:10px;--rs:6px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--navy);color:var(--text);overflow-x:hidden;}
+
+/* ── SHARED ── */
+.hidden{display:none!important;}
+.btn{height:40px;padding:0 20px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .2s;border:none;}
+.btn-gold{background:var(--gold);color:var(--navy);}
+.btn-gold:hover{background:var(--gold2);}
+.btn-red{background:var(--red);color:white;}
+.btn-red:hover{background:var(--red2);}
+.btn-ghost{background:var(--surface3);color:var(--text2);border:1px solid var(--border2);}
+.btn-ghost:hover{color:var(--text);}
+.btn-sm{height:32px;padding:0 14px;font-size:12px;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.bg{background:rgba(34,197,94,.12);color:var(--green);}
+.br{background:rgba(200,16,46,.12);color:var(--red);}
+.ba{background:rgba(201,168,76,.12);color:var(--gold);}
+.bb{background:rgba(59,130,246,.12);color:var(--blue);}
+.bo{background:rgba(249,115,22,.12);color:var(--orange);}
+.bpu{background:rgba(168,85,247,.12);color:var(--purple);}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface3);border:1px solid var(--border2);border-radius:var(--r);padding:14px 20px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:tin .3s ease;max-width:320px;}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-size:14px;font-weight:600;}
+.card-body{padding:20px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);margin-bottom:5px;}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px 14px;border-radius:var(--rs);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--gold);}
+.field textarea{resize:vertical;min-height:72px;}
+.field select option{background:var(--surface2);}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.f3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.section-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;}
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:40px;gap:12px;color:var(--text3);font-size:14px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LOGIN SCREEN ── */
+#screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(ellipse 80% 60% at 60% 30%,rgba(200,16,46,.1) 0%,transparent 60%),
+             linear-gradient(160deg,#0A1628,#0d1e35,#080f1e);}
+.login-box{width:100%;max-width:420px;}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:36px;}
+.login-crest{width:44px;height:44px;background:var(--gold);clip-path:polygon(50% 0%,100% 20%,100% 75%,50% 100%,0% 75%,0% 20%);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.login-crest::after{content:'S';font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--navy);}
+.login-brand{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;}
+.login-sub{font-size:12px;color:var(--text3);margin-top:2px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;}
+.login-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;margin-bottom:8px;}
+.login-desc{font-size:14px;color:var(--text2);margin-bottom:32px;line-height:1.6;}
+.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.role-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .2s;text-align:center;}
+.role-card:hover{border-color:var(--border2);}
+.role-card.selected{border-color:var(--gold);background:rgba(201,168,76,.06);}
+.role-icon{font-size:28px;margin-bottom:10px;display:block;}
+.role-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);}
+.role-desc{font-size:11px;color:var(--text3);margin-top:4px;}
+.pin-row{display:flex;gap:10px;justify-content:center;margin:20px 0;}
+.pin-digit{width:52px;height:64px;background:var(--surface2);border:2px solid var(--border2);border-radius:var(--rs);font-size:28px;font-weight:700;text-align:center;color:var(--text);outline:none;font-family:'Inter',sans-serif;transition:border-color .2s;}
+.pin-digit:focus{border-color:var(--gold);}
+.login-btn{width:100%;height:48px;background:var(--gold);color:var(--navy);border:none;border-radius:var(--rs);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:background .2s;}
+.login-btn:hover{background:var(--gold2);}
+.login-error{text-align:center;font-size:13px;color:var(--red);margin-top:12px;display:none;}
+
+/* ── PORTAL LAYOUT ── */
+#screen-portal{display:none;min-height:100vh;flex-direction:column;}
+#screen-portal.active{display:flex;}
+.portal-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;position:sticky;top:0;z-index:100;}
+.portal-topbar-left{display:flex;align-items:center;gap:10px;}
+.portal-crest{width:28px;height:28px;background:var(--gold);clip-path:polygon(50% 0%,100% 20%,100% 75%,50% 100%,0% 75%,0% 20%);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.portal-crest::after{content:'S';font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--navy);}
+.portal-title{font-size:14px;font-weight:600;}
+.portal-role{font-size:11px;color:var(--text3);}
+.portal-body{flex:1;display:flex;overflow:hidden;}
+.portal-sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:16px 10px;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rs);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:background .15s;border:none;background:none;width:100%;text-align:left;}
+.sidebar-item:hover{background:var(--surface2);color:var(--text);}
+.sidebar-item.active{background:rgba(201,168,76,.1);color:var(--gold);}
+.sidebar-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.portal-main{flex:1;overflow-y:auto;padding:28px;}
+.portal-panel{display:none;}
+.portal-panel.active{display:block;}
+
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;}
+.stat-lbl{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+.stat-val{font-size:26px;font-weight:700;line-height:1;}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:5px;}
+.stat-sub.up{color:var(--green);}
+.stat-sub.dn{color:var(--red);}
+
+/* ── PLAYER TABLE ── */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+thead th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);background:var(--surface2);border-bottom:1px solid var(--border);}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--surface2);}
+tbody td{padding:12px 16px;font-size:13px;color:var(--text2);vertical-align:middle;}
+.td-bold{font-weight:600;color:var(--text);}
+.td-actions{display:flex;gap:6px;align-items:center;}
+.ib{width:28px;height:28px;border-radius:var(--rs);border:1px solid var(--border2);background:none;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;}
+.ib:hover{background:var(--surface3);color:var(--text);}
+.ib.red:hover{background:rgba(200,16,46,.15);color:var(--red);border-color:rgba(200,16,46,.2);}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--navy-light);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;overflow:hidden;border:2px solid rgba(201,168,76,.2);}
+.avatar img{width:100%;height:100%;object-fit:cover;}
+.player-info{display:flex;align-items:center;gap:10px;}
+
+/* ── PROGRESS BAR ── */
+.prog-bar-wrap{display:flex;align-items:center;gap:10px;}
+.prog-bar{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s;}
+.prog-val{font-size:11px;font-weight:600;color:var(--text2);min-width:28px;text-align:right;}
+
+/* ── RADAR CHART ── */
+.radar-wrap{display:flex;justify-content:center;padding:10px 0;}
+
+/* ── SESSION LOG ── */
+.session-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:16px;margin-bottom:8px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;}
+.session-date{text-align:center;background:var(--surface2);border-radius:var(--rs);padding:8px 12px;min-width:56px;}
+.session-day{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);line-height:1;}
+.session-month{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);font-family:'Barlow Condensed',sans-serif;}
+.session-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+.session-meta{font-size:12px;color:var(--text3);}
+.session-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.session-tag{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:var(--surface3);color:var(--text3);}
+
+/* ── ATTENDANCE GRID ── */
+.att-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.att-day{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;cursor:default;}
+.att-present{background:rgba(34,197,94,.2);color:var(--green);}
+.att-absent{background:rgba(200,16,46,.15);color:var(--red);}
+.att-rest{background:var(--surface3);color:var(--text3);}
+.att-empty{background:transparent;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,13,24,.92);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:16px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--surface);border:1px solid var(--border2);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border-radius:var(--r);}
+.modal-hdr{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface);z-index:2;border-radius:var(--r) var(--r) 0 0;}
+.modal-hdr-title{font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;}
+.modal-close:hover{color:var(--text);}
+.modal-body{padding:24px;}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+/* ── SKILL SLIDER ── */
+.skill-row{display:grid;grid-template-columns:140px 1fr 40px;gap:12px;align-items:center;margin-bottom:14px;}
+.skill-name{font-size:13px;color:var(--text2);}
+.skill-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:3px;background:var(--surface3);outline:none;cursor:pointer;}
+.skill-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--navy);}
+.skill-val{font-size:13px;font-weight:700;color:var(--gold);text-align:right;}
+
+/* ── PLAYER PROFILE ── */
+.profile-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:20px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:var(--navy-light);display:flex;align-items:center;justify-content:center;font-size:36px;border:3px solid rgba(201,168,76,.3);overflow:hidden;flex-shrink:0;}
+.profile-avatar img{width:100%;height:100%;object-fit:cover;}
+.profile-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;}
+.profile-pos{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;}
+.profile-tags{display:flex;gap:8px;flex-wrap:wrap;}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);}
+.profile-stat{background:var(--surface2);padding:14px 16px;text-align:center;}
+.profile-stat-val{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);display:block;line-height:1;}
+.profile-stat-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-top:3px;font-family:'Barlow Condensed',sans-serif;}
+.tabs-row{display:flex;gap:2px;background:var(--surface);border-radius:var(--r);padding:4px;margin-bottom:20px;}
+.ptab{flex:1;padding:8px;text-align:center;border-radius:var(--rs);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;border:none;background:none;}
+.ptab.active{background:var(--surface3);color:var(--text);font-weight:600;}
+.ptab-panel{display:none;}
+.ptab-panel.active{display:block;}
+
+/* ── INJURY STATUS ── */
+.injury-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:16px;margin-bottom:8px;display:flex;align-items:center;gap:16px;}
+.injury-icon{font-size:24px;flex-shrink:0;}
+.injury-info{flex:1;}
+.injury-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+.injury-meta{font-size:12px;color:var(--text3);}
+.injury-status{font-size:12px;font-weight:600;}
+
+/* ── COACH NOTES ── */
+.note-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:var(--rs);padding:16px;margin-bottom:8px;}
+.note-date{font-size:11px;color:var(--text3);margin-bottom:6px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase;}
+.note-text{font-size:13px;color:var(--text2);line-height:1.6;}
+.note-coach{font-size:11px;color:var(--text3);margin-top:8px;}
+
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN SCREEN ═══════════════════ -->
+<div id="screen-login">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-crest"></div>
+      <div><div class="login-brand">SUDEVA</div><div class="login-sub">Coach & Player Portal</div></div>
+    </div>
+    <div class="login-title">WELCOME BACK</div>
+    <p class="login-desc">Select your role and enter your PIN to access your dashboard.</p>
+
+    <!-- Role selection -->
+    <div class="role-cards">
+      <div class="role-card selected" id="role-coach" onclick="selectRole('coach')">
+        <span class="role-icon">🏋️</span>
+        <div class="role-name">Coach</div>
+        <div class="role-desc">Log sessions, track players</div>
+      </div>
+      <div class="role-card" id="role-player" onclick="selectRole('player')">
+        <span class="role-icon">⚽</span>
+        <div class="role-name">Player</div>
+        <div class="role-desc">View your progress</div>
+      </div>
+    </div>
+
+    <!-- Player name (only for player role) -->
+    <div id="player-name-wrap" style="display:none;margin-bottom:16px">
+      <div class="field">
+        <label>Your Name</label>
+        <select id="player-select">
+          <option value="">Select your name...</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- PIN entry -->
+    <p style="font-size:12px;color:var(--text3);text-align:center;margin-bottom:12px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-transform:uppercase">Enter 4-digit PIN</p>
+    <div class="pin-row">
+      <input class="pin-digit" type="password" maxlength="1" id="pin1" inputmode="numeric" pattern="[0-9]">
+      <input class="pin-digit" type="password" maxlength="1" id="pin2" inputmode="numeric" pattern="[0-9]">
+      <input class="pin-digit" type="password" maxlength="1" id="pin3" inputmode="numeric" pattern="[0-9]">
+      <input class="pin-digit" type="password" maxlength="1" id="pin4" inputmode="numeric" pattern="[0-9]">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Enter Portal →</button>
+    <div class="login-error" id="login-error">Incorrect PIN. Please try again.</div>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:20px">
+      <a href="sudeva-revamp.html" style="color:var(--text3);text-decoration:none">← Back to Sudeva website</a>
+    </p>
+  </div>
+</div>
+
+<!-- ═══════════════════ PORTAL ═══════════════════ -->
+<div id="screen-portal">
+
+  <!-- TOPBAR -->
+  <div class="portal-topbar">
+    <div class="portal-topbar-left">
+      <div class="portal-crest"></div>
+      <div>
+        <div class="portal-title" id="portal-title">Coach Dashboard</div>
+        <div class="portal-role" id="portal-role">Coach</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:12px;color:var(--text3)" id="portal-user-name"></span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="portal-body">
+
+    <!-- SIDEBAR -->
+    <nav class="portal-sidebar" id="portal-sidebar"></nav>
+
+    <!-- MAIN -->
+    <main class="portal-main" id="portal-main"></main>
+
+  </div>
+</div>
+
+<!-- ═══════════════════ MODALS ═══════════════════ -->
+
+<!-- Log Session Modal -->
+<div class="modal-overlay" id="modal-session" onclick="if(event.target===this)closeModal('modal-session')">
+  <div class="modal-box">
+    <div class="modal-hdr"><div class="modal-hdr-title">Log Training Session</div><button class="modal-close" onclick="closeModal('modal-session')">✕</button></div>
+    <div class="modal-body">
+      <div class="f2">
+        <div class="field"><label>Date</label><input type="date" id="s-date"></div>
+        <div class="field"><label>Session Type</label>
+          <select id="s-type"><option>Technical Training</option><option>Tactical Training</option><option>Physical Conditioning</option><option>Match Play</option><option>Recovery Session</option><option>Video Analysis</option><option>Team Meeting</option></select>
+        </div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>Duration (minutes)</label><input type="number" id="s-duration" value="90" min="15" max="240"></div>
+        <div class="field"><label>Intensity</label>
+          <select id="s-intensity"><option>Low</option><option selected>Medium</option><option>High</option><option>Match Intensity</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Session Title / Focus</label><input type="text" id="s-title" placeholder="e.g. Pressing Triggers & High Line Defence"></div>
+      <div class="field"><label>Key Objectives</label><textarea id="s-notes" placeholder="What did you work on? Key drills, tactical concepts..."></textarea></div>
+      <div class="field"><label>Players Present</label>
+        <div id="attendance-checkboxes" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px;"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-session')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveSession()">💾 Save Session</button>
+    </div>
+  </div>
+</div>
+
+<!-- Update Player Metrics Modal -->
+<div class="modal-overlay" id="modal-metrics" onclick="if(event.target===this)closeModal('modal-metrics')">
+  <div class="modal-box">
+    <div class="modal-hdr"><div class="modal-hdr-title" id="metrics-modal-title">Update Player Metrics</div><button class="modal-close" onclick="closeModal('modal-metrics')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Rate each attribute from 1–10. These update the player's profile radar chart.</p>
+      <div class="section-label">Technical Skills</div>
+      <div id="skill-sliders"></div>
+      <div class="divider"></div>
+      <div class="section-label">Fitness Metrics</div>
+      <div id="fitness-inputs"></div>
+      <div class="divider"></div>
+      <div class="section-label">Match Performance</div>
+      <div class="f2">
+        <div class="field"><label>Goals (this month)</label><input type="number" id="m-goals" min="0" value="0"></div>
+        <div class="field"><label>Assists (this month)</label><input type="number" id="m-assists" min="0" value="0"></div>
+        <div class="field"><label>Matches Played</label><input type="number" id="m-played" min="0" value="0"></div>
+        <div class="field"><label>Rating (1–10)</label><input type="number" id="m-rating" min="1" max="10" step="0.1" value="7.0"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label">Injury Status</div>
+      <div class="f2">
+        <div class="field"><label>Status</label><select id="inj-status"><option value="fit">Fit ✅</option><option value="minor">Minor Injury ⚠️</option><option value="injured">Injured ❌</option><option value="recovery">In Recovery 🔄</option></select></div>
+        <div class="field"><label>Injury Detail (if any)</label><input type="text" id="inj-detail" placeholder="e.g. Hamstring strain"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-label">Coach Notes</div>
+      <div class="field"><textarea id="coach-note" placeholder="Add a private note for this player — only visible to coaches..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-metrics')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveMetrics()">💾 Save Metrics</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Player Modal -->
+<div class="modal-overlay" id="modal-add-player" onclick="if(event.target===this)closeModal('modal-add-player')">
+  <div class="modal-box">
+    <div class="modal-hdr"><div class="modal-hdr-title">Add Player</div><button class="modal-close" onclick="closeModal('modal-add-player')">✕</button></div>
+    <div class="modal-body">
+      <div class="f2">
+        <div class="field"><label>Full Name *</label><input type="text" id="np-name" placeholder="Player's full name"></div>
+        <div class="field"><label>PIN (4 digits) *</label><input type="number" id="np-pin" placeholder="e.g. 1234" min="1000" max="9999"></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>Position</label><select id="np-pos"><option>Goalkeeper</option><option>Defender</option><option>Midfielder</option><option>Winger</option><option>Striker</option></select></div>
+        <div class="field"><label>Age Group</label><select id="np-group"><option>U13</option><option>U15</option><option>U17</option><option selected>U19</option><option>U21</option><option>U23</option></select></div>
+      </div>
+      <div class="f2">
+        <div class="field"><label>State / Home Region</label><input type="text" id="np-state" placeholder="e.g. Manipur"></div>
+        <div class="field"><label>Jersey Number</label><input type="number" id="np-jersey" min="1" max="99"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-player')">Cancel</button>
+      <button class="btn btn-gold" onclick="addPlayer()">Add Player</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<script type="module">
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, collection, getDoc, getDocs, setDoc, addDoc, updateDoc, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── Firebase ──
+const app = initializeApp({
+  apiKey:"AIzaSyAQV_GWmz8ZLD7mXMQ4HtCigHr8h0ZvPpg",
+  authDomain:"sudeva-site.firebaseapp.com",
+  projectId:"sudeva-site",
+  storageBucket:"sudeva-site.firebasestorage.app",
+  messagingSenderId:"48593488679",
+  appId:"1:48593488679:web:9a97a9d46dc4ca15ea3702"
+});
+const db = getFirestore(app);
+
+// ── Helpers ──
+async function dbRead(col, id) {
+  try { const s = await getDoc(doc(db,col,id)); return s.exists()?s.data():null; }
+  catch(e) { console.warn(e); return null; }
+}
+async function dbWrite(col, id, data) {
+  try { await setDoc(doc(db,col,id), data, {merge:true}); return true; }
+  catch(e) { toast('Save error: '+e.message); return false; }
+}
+async function dbAdd(col, data) {
+  try { return await addDoc(collection(db,col), data); }
+  catch(e) { toast('Error: '+e.message); return null; }
+}
+async function dbList(col) {
+  try { const s = await getDocs(collection(db,col)); return s.docs.map(d=>({id:d.id,...d.data()})); }
+  catch(e) { return []; }
+}
+
+function toast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast'; el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 3500);
+}
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+window.openModal  = openModal;
+window.closeModal = closeModal;
+
+// ── PINs ──
+const COACH_PIN = '1234'; // change via admin settings
+const SETTINGS_COL = 'portal_settings';
+
+// ── State ──
+let currentRole = 'coach';
+let currentPlayer = null; // for player login
+let players = []; // all players loaded from Firebase
+let sessions = []; // all sessions
+let editingPlayerId = null;
+
+// ── SKILLS & FITNESS DEFINITIONS ──
+const SKILLS = [
+  {key:'passing',    label:'Passing'},
+  {key:'dribbling',  label:'Dribbling'},
+  {key:'shooting',   label:'Shooting'},
+  {key:'defending',  label:'Defending'},
+  {key:'heading',    label:'Heading'},
+  {key:'first_touch',label:'First Touch'},
+];
+const FITNESS = [
+  {key:'speed',     label:'Sprint Speed (km/h)',   unit:'km/h', max:35},
+  {key:'stamina',   label:'VO2 Max',               unit:'',     max:70},
+  {key:'strength',  label:'Strength Score (1–10)', unit:'',     max:10},
+  {key:'agility',   label:'Agility Score (1–10)',  unit:'',     max:10},
+];
+const INJ_LABELS = {fit:'Fit',minor:'Minor Injury',injured:'Injured',recovery:'In Recovery'};
+const INJ_CLASSES = {fit:'bg',minor:'ba',injured:'br',recovery:'bb'};
+
+// ─────────────────────────────────────────────
+//  LOGIN
+// ─────────────────────────────────────────────
+window.selectRole = function(role) {
+  currentRole = role;
+  document.getElementById('role-coach').classList.toggle('selected', role==='coach');
+  document.getElementById('role-player').classList.toggle('selected', role==='player');
+  document.getElementById('player-name-wrap').style.display = role==='player' ? 'block' : 'none';
+};
+
+window.doLogin = async function() {
+  const pin = ['pin1','pin2','pin3','pin4'].map(id=>document.getElementById(id).value).join('');
+  if (pin.length < 4) { showError('Please enter a 4-digit PIN.'); return; }
+
+  // Load settings from Firebase
+  const settings = await dbRead(SETTINGS_COL, 'pins') || { coachPin: COACH_PIN };
+
+  if (currentRole === 'coach') {
+    if (pin === settings.coachPin) {
+      enterPortal('coach', 'Coach');
+    } else {
+      showError('Incorrect coach PIN.');
+    }
+  } else {
+    // Player login — match against their stored PIN
+    const sel = document.getElementById('player-select').value;
+    if (!sel) { showError('Please select your name first.'); return; }
+    const player = players.find(p => p.id === sel);
+    if (!player) { showError('Player not found.'); return; }
+    if (pin === String(player.pin)) {
+      currentPlayer = player;
+      enterPortal('player', player.name);
+    } else {
+      showError('Incorrect PIN.');
+    }
+  }
+};
+
+function showError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
+}
+
+function clearPin() {
+  ['pin1','pin2','pin3','pin4'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pin1').focus();
+}
+
+// ─────────────────────────────────────────────
+//  ENTER PORTAL
+// ─────────────────────────────────────────────
+async function enterPortal(role, name) {
+  document.getElementById('screen-login').style.display = 'none';
+  const portal = document.getElementById('screen-portal');
+  portal.classList.add('active');
+  document.getElementById('portal-title').textContent = role === 'coach' ? 'Coach Dashboard' : 'My Dashboard';
+  document.getElementById('portal-role').textContent = role === 'coach' ? '🏋️ Coach' : '⚽ Player';
+  document.getElementById('portal-user-name').textContent = name;
+
+  // Load data
+  players  = await dbList('portal_players');
+  sessions = await dbList('portal_sessions');
+
+  if (role === 'coach') buildCoachPortal();
+  else                  buildPlayerPortal();
+}
+
+window.logout = function() {
+  document.getElementById('screen-portal').classList.remove('active');
+  document.getElementById('screen-login').style.display = 'flex';
+  clearPin();
+  currentPlayer = null;
+  document.getElementById('login-error').style.display = 'none';
+};
+
+// ─────────────────────────────────────────────
+//  COACH PORTAL
+// ─────────────────────────────────────────────
+function buildCoachPortal() {
+  const sidebar = document.getElementById('portal-sidebar');
+  sidebar.innerHTML = `
+    <div class="section-label" style="padding:0 8px 8px">Coach Menu</div>
+    <button class="sidebar-item active" onclick="coachNav('dashboard',this)"><span class="sidebar-icon">📊</span>Dashboard</button>
+    <button class="sidebar-item" onclick="coachNav('players',this)"><span class="sidebar-icon">👥</span>All Players</button>
+    <button class="sidebar-item" onclick="coachNav('sessions',this)"><span class="sidebar-icon">📋</span>Sessions Log</button>
+    <button class="sidebar-item" onclick="coachNav('attendance',this)"><span class="sidebar-icon">✅</span>Attendance</button>
+    <button class="sidebar-item" onclick="coachNav('injuries',this)"><span class="sidebar-icon">🏥</span>Injuries</button>
+    <button class="sidebar-item" onclick="coachNav('settings',this)"><span class="sidebar-icon">⚙️</span>Settings</button>`;
+  coachNav('dashboard', sidebar.querySelector('.sidebar-item'));
+}
+
+window.coachNav = function(panel, btn) {
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const main = document.getElementById('portal-main');
+  const renders = {
+    dashboard:  renderCoachDashboard,
+    players:    renderAllPlayers,
+    sessions:   renderSessionsLog,
+    attendance: renderAttendance,
+    injuries:   renderInjuries,
+    settings:   renderSettings,
+  };
+  if (renders[panel]) renders[panel](main);
+};
+
+function renderCoachDashboard(main) {
+  const total  = players.length;
+  const fit    = players.filter(p => p.injuryStatus === 'fit' || !p.injuryStatus).length;
+  const injured = players.filter(p => p.injuryStatus === 'injured' || p.injuryStatus === 'minor').length;
+  const todaySessions = sessions.filter(s => s.date === new Date().toISOString().split('T')[0]).length;
+  main.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div><h2 style="font-size:20px;font-weight:700">Good ${getTimeOfDay()}, Coach 👋</h2><p style="font-size:13px;color:var(--text2);margin-top:3px">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</p></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-gold" onclick="openSessionModal()">+ Log Session</button>
+        <button class="btn btn-ghost" onclick="openModal('modal-add-player')">+ Add Player</button>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-lbl">Total Players</div><div class="stat-val" style="color:var(--gold)">${total}</div><div class="stat-sub">In academy</div></div>
+      <div class="stat-card"><div class="stat-lbl">Fit & Available</div><div class="stat-val" style="color:var(--green)">${fit}</div><div class="stat-sub up">Ready to train</div></div>
+      <div class="stat-card"><div class="stat-lbl">Injured / Minor</div><div class="stat-val" style="color:var(--red)">${injured}</div><div class="stat-sub ${injured>0?'dn':''}">Needs attention</div></div>
+      <div class="stat-card"><div class="stat-lbl">Sessions Today</div><div class="stat-val" style="color:var(--blue)">${todaySessions}</div><div class="stat-sub">Logged</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Recent Sessions</div><button class="btn btn-ghost btn-sm" onclick="coachNav('sessions',null)">View All</button></div>
+        <div class="card-body">
+          ${sessions.length === 0 ? '<div style="font-size:13px;color:var(--text3);text-align:center;padding:20px 0">No sessions logged yet. Click "+ Log Session" to start.</div>' :
+            sessions.slice(-4).reverse().map(s => sessionItemHtml(s)).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Injury Watch</div></div>
+        <div class="card-body" style="padding:12px">
+          ${players.filter(p => p.injuryStatus && p.injuryStatus !== 'fit').length === 0
+            ? '<div style="font-size:13px;color:var(--text3);text-align:center;padding:20px 0">✅ All players fit</div>'
+            : players.filter(p => p.injuryStatus && p.injuryStatus !== 'fit').map(p => `
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+                <div style="font-size:20px">${p.injuryStatus==='injured'?'❌':p.injuryStatus==='minor'?'⚠️':'🔄'}</div>
+                <div style="flex:1"><div style="font-size:13px;font-weight:600">${p.name}</div><div style="font-size:11px;color:var(--text3)">${p.injuryDetail||INJ_LABELS[p.injuryStatus]}</div></div>
+                <span class="badge ${INJ_CLASSES[p.injuryStatus]}">${INJ_LABELS[p.injuryStatus]}</span>
+              </div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function sessionItemHtml(s) {
+  const d = new Date(s.date+'T00:00:00');
+  return `<div class="session-item">
+    <div class="session-date">
+      <div class="session-day">${d.getDate()}</div>
+      <div class="session-month">${d.toLocaleDateString('en',{month:'short'})}</div>
+    </div>
+    <div>
+      <div class="session-title">${s.title||s.type}</div>
+      <div class="session-meta">${s.type} · ${s.duration||90} min · ${s.intensity||'Medium'}</div>
+      <div class="session-tags">
+        ${(s.attendees||[]).length > 0 ? `<span class="session-tag">${(s.attendees||[]).length} players</span>` : ''}
+        <span class="session-tag">${s.intensity||'Medium'}</span>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--text3)">${(s.attendees||[]).length}/${players.length}</div>
+  </div>`;
+}
+
+function renderAllPlayers(main) {
+  main.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 style="font-size:20px;font-weight:700">All Players</h2>
+      <button class="btn btn-gold" onclick="openModal('modal-add-player')">+ Add Player</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Player</th><th>Position</th><th>Group</th><th>State</th><th>Status</th><th>Rating</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${players.length === 0
+            ? `<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3)">No players added yet. Click "+ Add Player" to get started.</td></tr>`
+            : players.map(p => `
+            <tr onclick="openPlayerProfile('${p.id}')">
+              <td><div class="player-info">
+                <div class="avatar">${p.photo?`<img src="${p.photo}">`:(p.name||'?')[0]}</div>
+                <div><div class="td-bold">${p.name}</div><div style="font-size:11px;color:var(--text3)">#${p.jersey||'—'}</div></div>
+              </div></td>
+              <td>${p.position||'—'}</td>
+              <td><span class="badge ba">${p.ageGroup||'—'}</span></td>
+              <td>${p.state||'—'}</td>
+              <td><span class="badge ${INJ_CLASSES[p.injuryStatus||'fit']}">${INJ_LABELS[p.injuryStatus||'fit']}</span></td>
+              <td><div style="display:flex;align-items:center;gap:8px">
+                <div style="font-size:14px;font-weight:700;color:var(--gold)">${p.matchRating||'—'}</div>
+              </div></td>
+              <td><div class="td-actions">
+                <button class="ib" title="Update Metrics" onclick="event.stopPropagation();openMetricsModal('${p.id}')">📊</button>
+                <button class="ib" title="View Profile" onclick="event.stopPropagation();openPlayerProfile('${p.id}')">👁</button>
+                <button class="ib red" title="Remove" onclick="event.stopPropagation();removePlayer('${p.id}')">🗑</button>
+              </div></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+function renderSessionsLog(main) {
+  main.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+      <h2 style="font-size:20px;font-weight:700">Sessions Log</h2>
+      <button class="btn btn-gold" onclick="openSessionModal()">+ Log Session</button>
+    </div>
+    ${sessions.length === 0
+      ? `<div class="card"><div class="card-body" style="text-align:center;padding:48px;color:var(--text3)">No sessions logged yet.</div></div>`
+      : sessions.slice().reverse().map(s => sessionItemHtml(s)).join('')}`;
+}
+
+function renderAttendance(main) {
+  // Build attendance summary per player
+  const summary = players.map(p => {
+    const attended = sessions.filter(s => (s.attendees||[]).includes(p.id)).length;
+    const total    = sessions.length;
+    const pct      = total > 0 ? Math.round((attended/total)*100) : 0;
+    return { ...p, attended, total, pct };
+  }).sort((a,b) => b.pct - a.pct);
+
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Attendance Overview</h2>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title">Player Attendance — ${sessions.length} sessions total</div></div>
+      <div class="card-body">
+        ${summary.length === 0
+          ? '<div style="text-align:center;padding:20px;color:var(--text3)">No data yet. Log sessions first.</div>'
+          : summary.map(p => `
+          <div style="display:grid;grid-template-columns:180px 1fr 80px 60px;align-items:center;gap:16px;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div class="player-info">
+              <div class="avatar">${(p.name||'?')[0]}</div>
+              <div style="font-size:13px;font-weight:600">${p.name}</div>
+            </div>
+            <div class="prog-bar-wrap">
+              <div class="prog-bar">
+                <div class="prog-fill" style="width:${p.pct}%;background:${p.pct>=80?'var(--green)':p.pct>=60?'var(--gold)':'var(--red)'}"></div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text3);text-align:center">${p.attended}/${p.total}</div>
+            <div style="font-size:14px;font-weight:700;color:${p.pct>=80?'var(--green)':p.pct>=60?'var(--gold)':'var(--red)'};text-align:right">${p.pct}%</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderInjuries(main) {
+  const allInj = players.filter(p => p.injuryStatus && p.injuryStatus !== 'fit');
+  const allFit = players.filter(p => !p.injuryStatus || p.injuryStatus === 'fit');
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Injury & Recovery Status</h2>
+    ${allInj.length > 0 ? `
+    <div class="section-label">Currently Unavailable (${allInj.length})</div>
+    ${allInj.map(p => `
+      <div class="injury-card">
+        <div class="injury-icon">${p.injuryStatus==='injured'?'❌':p.injuryStatus==='minor'?'⚠️':'🔄'}</div>
+        <div class="injury-info">
+          <div class="injury-name">${p.name}</div>
+          <div class="injury-meta">${p.position||''} · ${p.ageGroup||''} · ${p.injuryDetail||'No detail recorded'}</div>
+        </div>
+        <span class="badge ${INJ_CLASSES[p.injuryStatus]}">${INJ_LABELS[p.injuryStatus]}</span>
+        <button class="btn btn-ghost btn-sm" onclick="openMetricsModal('${p.id}')">Update</button>
+      </div>`).join('')}
+    <div class="divider"></div>` : ''}
+    <div class="section-label">Fit & Available (${allFit.length})</div>
+    ${allFit.map(p => `
+      <div class="injury-card">
+        <div class="injury-icon">✅</div>
+        <div class="injury-info"><div class="injury-name">${p.name}</div><div class="injury-meta">${p.position||''} · ${p.ageGroup||''}</div></div>
+        <span class="badge bg">Fit</span>
+      </div>`).join('')}`;
+}
+
+function renderSettings(main) {
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Portal Settings</h2>
+    <div class="card" style="max-width:480px">
+      <div class="card-hdr"><div class="card-title">🔐 Change Coach PIN</div></div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Update the PIN used by all coaches to log in to the portal.</p>
+        <div class="field"><label>New Coach PIN (4 digits)</label><input type="number" id="new-coach-pin" min="1000" max="9999" placeholder="e.g. 5678"></div>
+        <div class="field"><label>Confirm PIN</label><input type="number" id="confirm-coach-pin" min="1000" max="9999" placeholder="Repeat the PIN"></div>
+        <button class="btn btn-gold" onclick="saveCoachPin()">💾 Save New PIN</button>
+      </div>
+    </div>
+    <div class="card" style="max-width:480px;margin-top:16px">
+      <div class="card-hdr"><div class="card-title">ℹ️ About This Portal</div></div>
+      <div class="card-body">
+        <p style="font-size:13px;color:var(--text2);line-height:1.7">
+          This portal is powered by Firebase Firestore. All data — players, sessions, metrics — is stored securely in the cloud and accessible from any device.<br><br>
+          Player PINs are set when adding a player. Each player logs in with their own unique PIN.
+        </p>
+      </div>
+    </div>`;
+}
+
+window.saveCoachPin = async function() {
+  const np = document.getElementById('new-coach-pin').value;
+  const cp = document.getElementById('confirm-coach-pin').value;
+  if (!np || np.length !== 4) { toast('PIN must be exactly 4 digits'); return; }
+  if (np !== cp) { toast('PINs do not match'); return; }
+  await dbWrite(SETTINGS_COL, 'pins', { coachPin: np });
+  toast('✓ Coach PIN updated');
+};
+
+// ─────────────────────────────────────────────
+//  PLAYER PROFILE (coach view)
+// ─────────────────────────────────────────────
+window.openPlayerProfile = function(playerId) {
+  const p = players.find(x => x.id === playerId);
+  if (!p) return;
+  const playerSessions = sessions.filter(s => (s.attendees||[]).includes(playerId));
+  const attended = playerSessions.length;
+  const total    = sessions.length;
+  const pct      = total > 0 ? Math.round((attended/total)*100) : 0;
+  const main = document.getElementById('portal-main');
+
+  const skills = p.skills || {};
+  const fitness = p.fitness || {};
+
+  main.innerHTML = `
+    <div style="margin-bottom:16px">
+      <button class="btn btn-ghost btn-sm" onclick="coachNav('players',null)">← Back to Players</button>
+    </div>
+    <div class="profile-hero">
+      <div class="profile-avatar">${p.photo?`<img src="${p.photo}">`:(p.name||'?')[0]}</div>
+      <div>
+        <div class="profile-name">${p.name}</div>
+        <div class="profile-pos">${p.position||'—'} · ${p.ageGroup||'—'} · #${p.jersey||'—'}</div>
+        <div class="profile-tags">
+          <span class="badge ba">${p.ageGroup||'—'}</span>
+          <span class="badge ${INJ_CLASSES[p.injuryStatus||'fit']}">${INJ_LABELS[p.injuryStatus||'fit']}</span>
+          ${p.state ? `<span class="badge bb">${p.state}</span>` : ''}
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-gold btn-sm" onclick="openMetricsModal('${playerId}')">📊 Update Metrics</button>
+      </div>
+    </div>
+    <div class="profile-stats" style="margin-bottom:20px">
+      <div class="profile-stat"><span class="profile-stat-val">${pct}%</span><span class="profile-stat-lbl">Attendance</span></div>
+      <div class="profile-stat"><span class="profile-stat-val">${p.matchRating||'—'}</span><span class="profile-stat-lbl">Match Rating</span></div>
+      <div class="profile-stat"><span class="profile-stat-val">${(p.goals||0)}/${(p.assists||0)}</span><span class="profile-stat-lbl">Goals / Assists</span></div>
+    </div>
+
+    <div class="tabs-row">
+      <button class="ptab active" onclick="switchPTab('skills',this)">Skills</button>
+      <button class="ptab" onclick="switchPTab('fitness',this)">Fitness</button>
+      <button class="ptab" onclick="switchPTab('sessions',this)">Sessions</button>
+      <button class="ptab" onclick="switchPTab('notes',this)">Coach Notes</button>
+    </div>
+
+    <div class="ptab-panel active" id="ptab-skills">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="card"><div class="card-hdr"><div class="card-title">Technical Skills</div></div>
+          <div class="card-body">
+            ${SKILLS.map(sk => `
+              <div style="margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                  <span style="font-size:13px;color:var(--text2)">${sk.label}</span>
+                  <span style="font-size:13px;font-weight:700;color:var(--gold)">${skills[sk.key]||'—'}/10</span>
+                </div>
+                <div class="prog-bar">
+                  <div class="prog-fill" style="width:${(skills[sk.key]||0)*10}%;background:${skillColor(skills[sk.key]||0)}"></div>
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="card"><div class="card-hdr"><div class="card-title">Radar Chart</div></div>
+          <div class="card-body">
+            <div class="radar-wrap">${buildRadar(skills)}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ptab-panel" id="ptab-fitness">
+      <div class="card"><div class="card-hdr"><div class="card-title">Fitness Metrics</div></div>
+        <div class="card-body">
+          ${FITNESS.map(f => `
+            <div style="display:grid;grid-template-columns:180px 1fr 80px;align-items:center;gap:16px;margin-bottom:16px">
+              <div style="font-size:13px;color:var(--text2)">${f.label}</div>
+              <div class="prog-bar"><div class="prog-fill" style="width:${((fitness[f.key]||0)/f.max)*100}%;background:var(--blue)"></div></div>
+              <div style="font-size:14px;font-weight:700;color:var(--blue);text-align:right">${fitness[f.key]||'—'} ${f.unit}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="ptab-panel" id="ptab-sessions">
+      ${playerSessions.length === 0
+        ? '<div class="card"><div class="card-body" style="text-align:center;color:var(--text3);padding:32px">No sessions recorded for this player yet.</div></div>'
+        : playerSessions.slice().reverse().map(s => sessionItemHtml(s)).join('')}
+    </div>
+
+    <div class="ptab-panel" id="ptab-notes">
+      ${(p.notes||[]).length === 0
+        ? '<div class="card"><div class="card-body" style="text-align:center;color:var(--text3);padding:32px">No coach notes yet. Add one via "Update Metrics".</div></div>'
+        : (p.notes||[]).slice().reverse().map(n => `
+          <div class="note-card">
+            <div class="note-date">${n.date}</div>
+            <div class="note-text">${n.text}</div>
+            <div class="note-coach">— ${n.coach||'Coach'}</div>
+          </div>`).join('')}
+    </div>`;
+};
+
+window.switchPTab = function(tab, btn) {
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ptab-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('ptab-' + tab).classList.add('active');
+};
+
+// ─────────────────────────────────────────────
+//  SESSION MODAL
+// ─────────────────────────────────────────────
+window.openSessionModal = function() {
+  document.getElementById('s-date').value = new Date().toISOString().split('T')[0];
+  // Build attendance checkboxes
+  const wrap = document.getElementById('attendance-checkboxes');
+  wrap.innerHTML = players.map(p => `
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 8px;border-radius:var(--rs);transition:background .15s;" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background='transparent'">
+      <input type="checkbox" value="${p.id}" checked style="width:14px;height:14px;accent-color:var(--gold)">
+      <span style="font-size:12px;font-weight:500">${p.name}</span>
+    </label>`).join('');
+  openModal('modal-session');
+};
+
+window.saveSession = async function() {
+  const date       = document.getElementById('s-date').value;
+  const type       = document.getElementById('s-type').value;
+  const duration   = document.getElementById('s-duration').value;
+  const intensity  = document.getElementById('s-intensity').value;
+  const title      = document.getElementById('s-title').value || type;
+  const notes      = document.getElementById('s-notes').value;
+  const attendees  = Array.from(document.querySelectorAll('#attendance-checkboxes input:checked')).map(cb => cb.value);
+  if (!date) { toast('Please select a date'); return; }
+
+  const sessionData = { date, type, duration: parseInt(duration), intensity, title, notes, attendees, createdAt: new Date().toISOString() };
+  const ref = await dbAdd('portal_sessions', sessionData);
+  if (ref) {
+    sessions.push({ id: ref.id, ...sessionData });
+    toast(`✓ Session saved — ${attendees.length} players marked present`);
+    closeModal('modal-session');
+    // refresh current panel
+    const active = document.querySelector('.sidebar-item.active');
+    if (active) active.click();
+  }
+};
+
+// ─────────────────────────────────────────────
+//  METRICS MODAL
+// ─────────────────────────────────────────────
+window.openMetricsModal = function(playerId) {
+  editingPlayerId = playerId;
+  const p = players.find(x => x.id === playerId);
+  if (!p) return;
+  document.getElementById('metrics-modal-title').textContent = 'Update Metrics — ' + p.name;
+  const skills = p.skills || {};
+  const fitness = p.fitness || {};
+
+  // Skills sliders
+  document.getElementById('skill-sliders').innerHTML = SKILLS.map(sk => `
+    <div class="skill-row">
+      <div class="skill-name">${sk.label}</div>
+      <input type="range" class="skill-slider" min="1" max="10" value="${skills[sk.key]||5}" id="sk-${sk.key}"
+        oninput="document.getElementById('skv-${sk.key}').textContent=this.value">
+      <div class="skill-val" id="skv-${sk.key}">${skills[sk.key]||5}</div>
+    </div>`).join('');
+
+  // Fitness inputs
+  document.getElementById('fitness-inputs').innerHTML = FITNESS.map(f => `
+    <div class="field"><label>${f.label}</label>
+      <input type="number" id="ft-${f.key}" value="${fitness[f.key]||''}" placeholder="${f.unit}" min="0" max="${f.max}" step="0.1">
+    </div>`).join('');
+
+  // Match performance
+  document.getElementById('m-goals').value   = p.goals   || 0;
+  document.getElementById('m-assists').value = p.assists || 0;
+  document.getElementById('m-played').value  = p.matchesPlayed || 0;
+  document.getElementById('m-rating').value  = p.matchRating || 7.0;
+
+  // Injury
+  document.getElementById('inj-status').value = p.injuryStatus || 'fit';
+  document.getElementById('inj-detail').value  = p.injuryDetail || '';
+
+  // Note
+  document.getElementById('coach-note').value = '';
+
+  openModal('modal-metrics');
+};
+
+window.saveMetrics = async function() {
+  const p = players.find(x => x.id === editingPlayerId);
+  if (!p) return;
+
+  const newSkills  = {};
+  SKILLS.forEach(sk => { newSkills[sk.key] = parseInt(document.getElementById('sk-'+sk.key).value); });
+
+  const newFitness = {};
+  FITNESS.forEach(f  => { const v = document.getElementById('ft-'+f.key).value; if (v) newFitness[f.key] = parseFloat(v); });
+
+  const note = document.getElementById('coach-note').value.trim();
+  const existingNotes = p.notes || [];
+  if (note) existingNotes.push({ date: new Date().toLocaleDateString('en-IN'), text: note, coach: 'Coach' });
+
+  const updates = {
+    skills:         newSkills,
+    fitness:        newFitness,
+    goals:          parseInt(document.getElementById('m-goals').value)   || 0,
+    assists:        parseInt(document.getElementById('m-assists').value) || 0,
+    matchesPlayed:  parseInt(document.getElementById('m-played').value)  || 0,
+    matchRating:    parseFloat(document.getElementById('m-rating').value) || 7.0,
+    injuryStatus:   document.getElementById('inj-status').value,
+    injuryDetail:   document.getElementById('inj-detail').value,
+    notes:          existingNotes,
+    updatedAt:      new Date().toISOString(),
+  };
+
+  const ok = await dbWrite('portal_players', editingPlayerId, updates);
+  if (ok) {
+    Object.assign(p, updates);
+    toast('✓ Metrics saved for ' + p.name);
+    closeModal('modal-metrics');
+    openPlayerProfile(editingPlayerId);
+  }
+};
+
+// ─────────────────────────────────────────────
+//  ADD / REMOVE PLAYER
+// ─────────────────────────────────────────────
+window.addPlayer = async function() {
+  const name    = document.getElementById('np-name').value.trim();
+  const pin     = document.getElementById('np-pin').value;
+  const pos     = document.getElementById('np-pos').value;
+  const group   = document.getElementById('np-group').value;
+  const state   = document.getElementById('np-state').value.trim();
+  const jersey  = document.getElementById('np-jersey').value;
+
+  if (!name)    { toast('Please enter a player name'); return; }
+  if (!pin || pin.length !== 4) { toast('PIN must be 4 digits'); return; }
+
+  const playerData = { name, pin, position:pos, ageGroup:group, state, jersey:parseInt(jersey)||null,
+    injuryStatus:'fit', skills:{}, fitness:{}, notes:[], goals:0, assists:0, matchesPlayed:0, matchRating:null,
+    createdAt: new Date().toISOString() };
+
+  const ref = await dbAdd('portal_players', playerData);
+  if (ref) {
+    players.push({ id: ref.id, ...playerData });
+    toast('✓ ' + name + ' added to the squad');
+    closeModal('modal-add-player');
+    ['np-name','np-pin','np-state','np-jersey'].forEach(id => document.getElementById(id).value = '');
+    renderAllPlayers(document.getElementById('portal-main'));
+    // Update player select for login
+    populatePlayerSelect();
+  }
+};
+
+window.removePlayer = async function(playerId) {
+  const p = players.find(x => x.id === playerId);
+  if (!p) return;
+  if (!confirm(`Remove ${p.name} from the portal? This cannot be undone.`)) return;
+  // Mark as removed in Firebase
+  await dbWrite('portal_players', playerId, { removed: true });
+  players = players.filter(x => x.id !== playerId);
+  toast(p.name + ' removed');
+  renderAllPlayers(document.getElementById('portal-main'));
+};
+
+// ─────────────────────────────────────────────
+//  PLAYER PORTAL
+// ─────────────────────────────────────────────
+function buildPlayerPortal() {
+  const p = currentPlayer;
+  const sidebar = document.getElementById('portal-sidebar');
+  sidebar.innerHTML = `
+    <div class="section-label" style="padding:0 8px 8px">${p.name}</div>
+    <button class="sidebar-item active" onclick="playerNav('dashboard',this)"><span class="sidebar-icon">📊</span>My Dashboard</button>
+    <button class="sidebar-item" onclick="playerNav('skills',this)"><span class="sidebar-icon">⚽</span>My Skills</button>
+    <button class="sidebar-item" onclick="playerNav('fitness',this)"><span class="sidebar-icon">💪</span>My Fitness</button>
+    <button class="sidebar-item" onclick="playerNav('sessions',this)"><span class="sidebar-icon">📋</span>Sessions</button>
+    <button class="sidebar-item" onclick="playerNav('notes',this)"><span class="sidebar-icon">📝</span>Coach Notes</button>`;
+  playerNav('dashboard', sidebar.querySelector('.sidebar-item'));
+}
+
+window.playerNav = function(panel, btn) {
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const main = document.getElementById('portal-main');
+  const p = players.find(x => x.id === currentPlayer.id) || currentPlayer;
+  const renders = {
+    dashboard: () => renderPlayerDashboard(main, p),
+    skills:    () => renderPlayerSkills(main, p),
+    fitness:   () => renderPlayerFitness(main, p),
+    sessions:  () => renderPlayerSessions(main, p),
+    notes:     () => renderPlayerNotes(main, p),
+  };
+  if (renders[panel]) renders[panel]();
+};
+
+function renderPlayerDashboard(main, p) {
+  const playerSessions = sessions.filter(s => (s.attendees||[]).includes(p.id));
+  const attended = playerSessions.length;
+  const total    = sessions.length;
+  const pct      = total > 0 ? Math.round((attended/total)*100) : 0;
+  const skills   = p.skills || {};
+  const avgSkill = SKILLS.length > 0
+    ? (SKILLS.reduce((sum,sk) => sum + (skills[sk.key]||0), 0) / SKILLS.length).toFixed(1)
+    : '—';
+
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">Welcome back, ${p.name.split(' ')[0]}! 👋</h2>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:24px">${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'})}</p>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-lbl">Attendance</div><div class="stat-val" style="color:${pct>=80?'var(--green)':pct>=60?'var(--gold)':'var(--red)'}">${pct}%</div><div class="stat-sub">${attended}/${total} sessions</div></div>
+      <div class="stat-card"><div class="stat-lbl">Avg Skill Rating</div><div class="stat-val" style="color:var(--gold)">${avgSkill}</div><div class="stat-sub">Out of 10</div></div>
+      <div class="stat-card"><div class="stat-lbl">Match Rating</div><div class="stat-val" style="color:var(--blue)">${p.matchRating||'—'}</div><div class="stat-sub">Last rated</div></div>
+      <div class="stat-card"><div class="stat-lbl">Status</div><div class="stat-val" style="font-size:18px">${p.injuryStatus==='fit'||!p.injuryStatus?'✅':'⚠️'}</div><div class="stat-sub">${INJ_LABELS[p.injuryStatus||'fit']}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">My Skills Radar</div></div>
+        <div class="card-body"><div class="radar-wrap">${buildRadar(p.skills||{})}</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><div class="card-title">Recent Sessions</div></div>
+        <div class="card-body">
+          ${playerSessions.length === 0
+            ? '<div style="font-size:13px;color:var(--text3);text-align:center;padding:20px">No sessions yet.</div>'
+            : playerSessions.slice(-3).reverse().map(s => sessionItemHtml(s)).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderPlayerSkills(main, p) {
+  const skills = p.skills || {};
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">My Technical Skills</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card"><div class="card-hdr"><div class="card-title">Skill Ratings</div></div>
+        <div class="card-body">
+          ${SKILLS.map(sk => `
+            <div style="margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:13px;color:var(--text2)">${sk.label}</span>
+                <span style="font-size:14px;font-weight:700;color:var(--gold)">${skills[sk.key]||'—'}/10</span>
+              </div>
+              <div class="prog-bar" style="height:8px">
+                <div class="prog-fill" style="width:${(skills[sk.key]||0)*10}%;background:${skillColor(skills[sk.key]||0)}"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="card"><div class="card-hdr"><div class="card-title">Radar Overview</div></div>
+        <div class="card-body"><div class="radar-wrap">${buildRadar(skills, 180)}</div></div>
+      </div>
+    </div>`;
+}
+
+function renderPlayerFitness(main, p) {
+  const fitness = p.fitness || {};
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">My Fitness Metrics</h2>
+    <div class="card" style="max-width:600px">
+      <div class="card-hdr"><div class="card-title">Current Readings</div></div>
+      <div class="card-body">
+        ${FITNESS.map(f => `
+          <div style="display:grid;grid-template-columns:200px 1fr 80px;align-items:center;gap:16px;margin-bottom:20px">
+            <div style="font-size:13px;color:var(--text2)">${f.label}</div>
+            <div class="prog-bar" style="height:8px">
+              <div class="prog-fill" style="width:${((fitness[f.key]||0)/f.max)*100}%;background:var(--blue)"></div>
+            </div>
+            <div style="font-size:15px;font-weight:700;color:var(--blue);text-align:right">${fitness[f.key]||'—'} ${f.unit}</div>
+          </div>`).join('')}
+        <p style="font-size:12px;color:var(--text3);margin-top:8px">Metrics updated by your coach after each assessment session.</p>
+      </div>
+    </div>`;
+}
+
+function renderPlayerSessions(main, p) {
+  const playerSessions = sessions.filter(s => (s.attendees||[]).includes(p.id));
+  const attended = playerSessions.length;
+  const total    = sessions.length;
+  const pct      = total > 0 ? Math.round((attended/total)*100) : 0;
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:6px">My Sessions</h2>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:20px">Attendance: <strong style="color:${pct>=80?'var(--green)':'var(--gold)'}">${pct}%</strong> (${attended} of ${total} sessions)</p>
+    ${playerSessions.length === 0
+      ? '<div class="card"><div class="card-body" style="text-align:center;color:var(--text3);padding:32px">No sessions recorded yet.</div></div>'
+      : playerSessions.slice().reverse().map(s => sessionItemHtml(s)).join('')}`;
+}
+
+function renderPlayerNotes(main, p) {
+  const notes = (p.notes || []).filter(n => n.text);
+  main.innerHTML = `
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:20px">Coach Notes</h2>
+    ${notes.length === 0
+      ? '<div class="card"><div class="card-body" style="text-align:center;color:var(--text3);padding:32px">No coach notes yet.</div></div>'
+      : notes.slice().reverse().map(n => `
+        <div class="note-card">
+          <div class="note-date">${n.date}</div>
+          <div class="note-text">${n.text}</div>
+          <div class="note-coach">— ${n.coach||'Coach'}</div>
+        </div>`).join('')}`;
+}
+
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+function skillColor(val) {
+  if (val >= 8) return 'var(--green)';
+  if (val >= 6) return 'var(--gold)';
+  if (val >= 4) return 'var(--orange)';
+  return 'var(--red)';
+}
+
+function getTimeOfDay() {
+  const h = new Date().getHours();
+  if (h < 12) return 'morning';
+  if (h < 17) return 'afternoon';
+  return 'evening';
+}
+
+function buildRadar(skills, size = 160) {
+  const labels = SKILLS.map(s => s.label);
+  const values = SKILLS.map(s => (skills[s.key] || 0) / 10);
+  const cx = size/2, cy = size/2, r = size*0.38;
+  const n = labels.length;
+  const pts = values.map((v, i) => {
+    const angle = (Math.PI * 2 * i / n) - Math.PI/2;
+    return [cx + r * v * Math.cos(angle), cy + r * v * Math.sin(angle)];
+  });
+  const gridPts = (level) => Array.from({length:n}, (_, i) => {
+    const angle = (Math.PI * 2 * i / n) - Math.PI/2;
+    return [cx + r * level * Math.cos(angle), cy + r * level * Math.sin(angle)];
+  });
+
+  let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+  // Grid circles
+  [0.25, 0.5, 0.75, 1].forEach(level => {
+    const gp = gridPts(level);
+    svg += `<polygon points="${gp.map(p=>p.join(',')).join(' ')}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="1"/>`;
+  });
+  // Axis lines
+  gridPts(1).forEach(([x,y]) => {
+    svg += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(255,255,255,.06)" stroke-width="1"/>`;
+  });
+  // Data polygon
+  svg += `<polygon points="${pts.map(p=>p.join(',')).join(' ')}" fill="rgba(201,168,76,.2)" stroke="${'#C9A84C'}" stroke-width="1.5"/>`;
+  // Data points
+  pts.forEach(([x,y]) => {
+    svg += `<circle cx="${x}" cy="${y}" r="3" fill="#C9A84C"/>`;
+  });
+  // Labels
+  gridPts(1.22).forEach(([x,y], i) => {
+    svg += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="${size<200?8:10}" fill="rgba(245,245,240,.4)" font-family="Barlow Condensed,sans-serif" font-weight="600">${labels[i]}</text>`;
+  });
+  svg += `</svg>`;
+  return svg;
+}
+
+function populatePlayerSelect() {
+  const sel = document.getElementById('player-select');
+  sel.innerHTML = '<option value="">Select your name...</option>';
+  players.filter(p => !p.removed).forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = p.name;
+    sel.appendChild(opt);
+  });
+}
+
+// ─────────────────────────────────────────────
+//  PIN INPUT — auto-advance
+// ─────────────────────────────────────────────
+['pin1','pin2','pin3','pin4'].forEach((id, idx, arr) => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    if (el.value.length === 1 && idx < arr.length - 1) document.getElementById(arr[idx+1]).focus();
+    if (el.value.length === 1 && idx === arr.length - 1) document.getElementById('pin1').closest('.login-box').querySelector('.login-btn').focus();
+  });
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !el.value && idx > 0) document.getElementById(arr[idx-1]).focus();
+    if (e.key === 'Enter') window.doLogin();
+  });
+});
+
+// ─────────────────────────────────────────────
+//  INIT — load players for login dropdown
+// ─────────────────────────────────────────────
+(async () => {
+  players = (await dbList('portal_players')).filter(p => !p.removed);
+  populatePlayerSelect();
+})();
+</script>
+</body>
+</html>
